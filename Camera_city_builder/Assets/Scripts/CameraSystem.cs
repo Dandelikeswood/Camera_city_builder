@@ -5,11 +5,31 @@ using UnityEngine;
 public class CameraSystem : MonoBehaviour
 {
     [SerializeField] private bool useEdgeScrolling = false;
+    [SerializeField] private bool useDragPan = false;
+
 
     private bool dragPanMoveActive;
     private Vector2 lastMousePosition;
 
     private void Update()
+    {
+        HandleCameraMovement();
+
+        if (useEdgeScrolling)
+        {
+            HandleCameraMovementEdgeScrolling();
+        }
+
+        if (useDragPan)
+        {
+            HandleCameraMovementDragPan();
+        }
+
+        HandleCameraRotation();
+    }
+
+
+    private void HandleCameraMovement()
     {
         Vector3 inputDir = new Vector3(0, 0, 0);
 
@@ -18,29 +38,45 @@ public class CameraSystem : MonoBehaviour
         if (Input.GetKey(KeyCode.Q)) inputDir.x = -1f;
         if (Input.GetKey(KeyCode.D)) inputDir.x = +1f;
 
+        Vector3 moveDir = transform.forward * inputDir.z + transform.right * inputDir.x;
 
-        if (useEdgeScrolling)
+        float moveSpeed = 50f;
+        transform.position += moveDir * moveSpeed * Time.deltaTime;
+    }
+
+    private void HandleCameraMovementEdgeScrolling()
+    {
+        Vector3 inputDir = new Vector3(0, 0, 0);
+
+        int edgeScrollSize = 20;
+
+        if (Input.mousePosition.x < edgeScrollSize)
         {
-            int edgeScrollSize = 20;
-
-            if (Input.mousePosition.x < edgeScrollSize)
-            {
-                inputDir.x = -1f;
-            }
-            if (Input.mousePosition.y < edgeScrollSize)
-            {
-                inputDir.z = -1f;
-            }
-            if (Input.mousePosition.x > Screen.width - edgeScrollSize)
-            {
-                inputDir.x = +1f;
-            }
-            if (Input.mousePosition.y > Screen.height - edgeScrollSize)
-            {
-                inputDir.z = +1f;
-            }
+            inputDir.x = -1f;
         }
+        if (Input.mousePosition.y < edgeScrollSize)
+        {
+            inputDir.z = -1f;
+        }
+        if (Input.mousePosition.x > Screen.width - edgeScrollSize)
+        {
+            inputDir.x = +1f;
+        }
+        if (Input.mousePosition.y > Screen.height - edgeScrollSize)
+        {
+            inputDir.z = +1f;
+        }
+        
 
+        Vector3 moveDir = transform.forward * inputDir.z + transform.right * inputDir.x;
+
+        float moveSpeed = 50f;
+        transform.position += moveDir * moveSpeed * Time.deltaTime;
+    }
+
+    private void HandleCameraMovementDragPan()
+    {
+        Vector3 inputDir = new Vector3(0, 0, 0);
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -63,12 +99,14 @@ public class CameraSystem : MonoBehaviour
             lastMousePosition = Input.mousePosition;
         }
 
-
         Vector3 moveDir = transform.forward * inputDir.z + transform.right * inputDir.x;
 
         float moveSpeed = 50f;
         transform.position += moveDir * moveSpeed * Time.deltaTime;
+    }
 
+    private void HandleCameraRotation()
+    {
         float rotateDir = 0f;
         if (Input.GetKey(KeyCode.A)) rotateDir = +1f;
         if (Input.GetKey(KeyCode.E)) rotateDir = -1f;
