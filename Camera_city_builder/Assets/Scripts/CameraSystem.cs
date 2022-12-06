@@ -6,6 +6,8 @@ public class CameraSystem : MonoBehaviour
 {
     [SerializeField] private bool useEdgeScrolling = false;
 
+    private bool dragPanMoveActive;
+    private Vector2 lastMousePosition;
 
     private void Update()
     {
@@ -39,11 +41,33 @@ public class CameraSystem : MonoBehaviour
             }
         }
 
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            dragPanMoveActive = true;
+            lastMousePosition = Input.mousePosition;
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            dragPanMoveActive = false;
+        }
+
+        if (dragPanMoveActive)
+        {
+            Vector2 mouseMovementDelta = (Vector2)Input.mousePosition - lastMousePosition;
+
+            float dragPanSpeed = 0.3f;
+            inputDir.x = mouseMovementDelta.x * dragPanSpeed;
+            inputDir.z = mouseMovementDelta.y * dragPanSpeed;
+
+            lastMousePosition = Input.mousePosition;
+        }
+
+
         Vector3 moveDir = transform.forward * inputDir.z + transform.right * inputDir.x;
 
         float moveSpeed = 50f;
         transform.position += moveDir * moveSpeed * Time.deltaTime;
-
 
         float rotateDir = 0f;
         if (Input.GetKey(KeyCode.A)) rotateDir = +1f;
