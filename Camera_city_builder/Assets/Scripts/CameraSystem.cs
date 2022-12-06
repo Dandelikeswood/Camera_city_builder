@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraSystem : MonoBehaviour
 {
+    [SerializeField] private bool useEdgeScrolling = false;
 
 
     private void Update()
@@ -14,6 +15,29 @@ public class CameraSystem : MonoBehaviour
         if (Input.GetKey(KeyCode.S)) inputDir.z = -1f;
         if (Input.GetKey(KeyCode.Q)) inputDir.x = -1f;
         if (Input.GetKey(KeyCode.D)) inputDir.x = +1f;
+
+
+        if (useEdgeScrolling)
+        {
+            int edgeScrollSize = 20;
+
+            if (Input.mousePosition.x < edgeScrollSize)
+            {
+                inputDir.x = -1f;
+            }
+            if (Input.mousePosition.y < edgeScrollSize)
+            {
+                inputDir.z = -1f;
+            }
+            if (Input.mousePosition.x > Screen.width - edgeScrollSize)
+            {
+                inputDir.x = +1f;
+            }
+            if (Input.mousePosition.y > Screen.height - edgeScrollSize)
+            {
+                inputDir.z = +1f;
+            }
+        }
 
         Vector3 moveDir = transform.forward * inputDir.z + transform.right * inputDir.x;
 
