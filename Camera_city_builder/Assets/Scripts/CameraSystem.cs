@@ -46,8 +46,8 @@ public class CameraSystem : MonoBehaviour
 
         HandleCameraRotation();
 
-        HandleCameraZoom_FieldOfView();
-        //HandleCameraZoom_MoveForward();
+        //HandleCameraZoom_FieldOfView();
+        HandleCameraZoom_MoveForward();
         //HandleCameraZoom_LowerY();
     }
 
