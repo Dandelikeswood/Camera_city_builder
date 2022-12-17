@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class CameraSystem : MonoBehaviour
 {
@@ -14,17 +15,22 @@ public class CameraSystem : MonoBehaviour
     [SerializeField] private float followOffsetMax = 50f;
     [SerializeField] private float followOffsetMinY = 10f;
     [SerializeField] private float followOffsetMaxY = 50f;
+    [SerializeField] private AudioSource click_sound;
 
 
 
 
-
-
+    public string levelToLoad;
     private bool dragPanMoveActive;
     private Vector2 lastMousePosition;
     private float targetFieldOfView = 50;
     private Vector3 followOffset;
 
+    public void ReturntoMenu()
+    {
+        click_sound.Play();
+        SceneManager.LoadScene(levelToLoad);
+    }
 
     private void Awake()
     {
@@ -131,14 +137,12 @@ public class CameraSystem : MonoBehaviour
     private void HandleCameraRotation()
     {
         float rotateDir = 0f;
-        if (Input.GetKey(KeyCode.A)) rotateDir = +1f;
-        if (Input.GetKey(KeyCode.E)) rotateDir = -1f;
+        if (Input.GetKey(KeyCode.E)) rotateDir = +1f;
+        if (Input.GetKey(KeyCode.A)) rotateDir = -1f;
 
         float rotateSpeed = 100f;
         transform.eulerAngles += new Vector3(0, rotateDir * rotateSpeed * Time.deltaTime, 0);
     }
-
-
     private void HandleCameraZoom_FieldOfView()
     {
         if (Input.mouseScrollDelta.y > 0)
